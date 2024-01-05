@@ -26,12 +26,16 @@ class PositionalEncoding(nn.Module):
         pe[:, 1::2] = torch.cos(position * div_term)
         
         # Adding an extra dimension at the beginning of pe matrix for batch handling
-        pe = pe.unsqueeze(0)
+        pe = pe.unsqueeze(0) # pe: (1, seq_len, d_model)로 1은 배치의 차원을 의미한다.
         
         # Registering 'pe' as buffer. Buffer is a tensor not considered as a model parameter
-        self.register_buffer('pe', pe) 
+        self.register_buffer('pe', pe)
         
     def forward(self,x):
         # Addind positional encoding to the input tensor X
+        # x: (batch_size, seq_len, d_model)
         x = x + (self.pe[:, :x.shape[1], :]).requires_grad_(False)
         return self.dropout(x) # Dropout for regularization
+
+        # 왜 pe[:, :x.shape[1], :] 이거임??
+        # 각 배치마다 x의 seq_len이 다를 수 있기 때문에, pe의 seq_len을 x의 seq_len에 맞춰주기 위해서이다.
