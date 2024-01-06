@@ -1,8 +1,7 @@
-import torch.nn as nn
-import torch
+import numpy as np
 
 # Creating the Positional Encoding
-class PositionalEncoding(nn.Module):
+class PositionalEncoding:
     
     def __init__(self, d_model: int, seq_len: int, dropout: float) -> None:
         super().__init__()
@@ -11,10 +10,11 @@ class PositionalEncoding(nn.Module):
         self.dropout = nn.Dropout(dropout) # Dropout layer to prevent overfitting
         
         # Creating a positional encoding matrix of shape (seq_len, d_model) filled with zeros
-        pe = torch.zeros(seq_len, d_model) 
+        pe = np.zeros(seq_len, d_model) 
         
         # Creating a tensor representing positions (0 to seq_len - 1)
         position = torch.arange(0, seq_len, dtype = torch.float).unsqueeze(1) # Transforming 'position' into a 2D tensor['seq_len, 1']
+        position = np.arange(seq_len)[:, np.newaxis]
         
         # Creating the division term for the positional encoding formula
         div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))

@@ -37,5 +37,5 @@ class PositionalEncoding(nn.Module):
         x = x + (self.pe[:, :x.shape[1], :]).requires_grad_(False)
         return self.dropout(x) # Dropout for regularization
 
-        # 왜 pe[:, :x.shape[1], :] 이거임??
-        # 각 배치마다 x의 seq_len이 다를 수 있기 때문에, pe의 seq_len을 x의 seq_len에 맞춰주기 위해서이다.
+        # Q. 왜 pe[:, :x.shape[1], :] 이거임??
+        # A. 각 배치마다 x의 seq_len이 다를 수 있기 때문에, pe의 seq_len을 x의 seq_len에 맞춰주기 위해서이다.
