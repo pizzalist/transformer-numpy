@@ -1,5 +1,5 @@
 import numpy as np
-
+from utils import Dropout
 # Creating the Positional Encoding
 class PositionalEncoding:
     
@@ -7,30 +7,28 @@ class PositionalEncoding:
         super().__init__()
         self.d_model = d_model # Dimensionality of the model
         self.seq_len = seq_len # Maximum sequence length
-        self.dropout = nn.Dropout(dropout) # Dropout layer to prevent overfitting
+        self.dropout = Dropout.forward(dropout) # Dropout layer to prevent overfitting
         
         # Creating a positional encoding matrix of shape (seq_len, d_model) filled with zeros
-        pe = np.zeros(seq_len, d_model) 
+        pe = np.zeros((seq_len, d_model)) 
         
         # Creating a tensor representing positions (0 to seq_len - 1)
-        position = torch.arange(0, seq_len, dtype = torch.float).unsqueeze(1) # Transforming 'position' into a 2D tensor['seq_len, 1']
-        position = np.arange(seq_len)[:, np.newaxis]
+        position = np.arange(10, dtype=float)[:, np.newaxis] # Transforming 'position' into a 2D tensor['seq_len, 1']
         
         # Creating the division term for the positional encoding formula
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+        div_term = np.exp(np.arange(0, d_model, 2, dtype=float) * -(np.log(10000.0) / d_model))
         
         # Apply sine to even indices in pe
-        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 0::2] = np.sin(position * div_term)
         # Apply cosine to odd indices in pe
-        pe[:, 1::2] = torch.cos(position * div_term)
+        pe[:, 1::2] = np.cos(position * div_term)
         
         # Adding an extra dimension at the beginning of pe matrix for batch handling
-        pe = pe.unsqueeze(0)
+        pe = np.expand_dims(pe, axis=0)
         
-        # Registering 'pe' as buffer. Buffer is a tensor not considered as a model parameter
-        self.register_buffer('pe', pe) 
+        self.pe = pe
         
     def forward(self,x):
         # Addind positional encoding to the input tensor X
-        x = x + (self.pe[:, :x.shape[1], :]).requires_grad_(False)
+        x = x + self.pe[:, :x.shape[1], :]
         return self.dropout(x) # Dropout for regularization
