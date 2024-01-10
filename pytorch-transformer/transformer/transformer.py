@@ -21,8 +21,12 @@ class Transformer(nn.Module):
         
     # Encoder     
     def encode(self, src, src_mask):
+        # (8 batch_size, 350 seq_len)
         src = self.src_embed(src) # Applying source embeddings to the input source language
+        # (8 batch_size, 350 seq_len, 512 d_model)
+        
         src = self.src_pos(src) # Applying source positional encoding to the source embeddings
+        # (8 batch_size, 350 seq_len, 512 d_model)
         return self.encoder(src, src_mask) # Returning the source embeddings plus a source mask to prevent attention to certain elements
     
     # Decoder

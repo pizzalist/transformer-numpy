@@ -96,21 +96,29 @@ def train_model(config):
         
         # For each batch...
         for batch in batch_iterator:
+            # data 로더 과정에서 encoder decoder 무슨 차이 여기서? 
+            #   -> encoder는 src, decoder는 tgt이다.
+            # 왜 한 batch안에 8개 문장이 들어가는지?
+            #   -> config에 'batch_size': 8로 설정 해놔서
+            # 350의 의미는?
+            #  -> 350개의 단어를 의미한다.
             model.train() # Train the model
             
             # Loading input data and masks onto the GPU
-            encoder_input = batch['encoder_input'].to(device)
-            decoder_input = batch['decoder_input'].to(device)
-            encoder_mask = batch['encoder_mask'].to(device)
-            decoder_mask = batch['decoder_mask'].to(device)
+            encoder_input = batch['encoder_input'].to(device) # torch.Size([8, 350])
+            decoder_input = batch['decoder_input'].to(device) # torch.Size([8, 350])
+            encoder_mask = batch['encoder_mask'].to(device)   # torch.Size([8, 1, 1, 350])
+            decoder_mask = batch['decoder_mask'].to(device)   # torch.Size([8, 1, 350, 350])
             
             # Running tensors through the Transformer
             encoder_output = model.encode(encoder_input, encoder_mask)
             decoder_output = model.decode(encoder_output, encoder_mask, decoder_input, decoder_mask)
-            proj_output = model.project(decoder_output)
+            proj_output = model.project(decoder_output) # torch.Size([8, 350, 22463]) (batch_size, seq_len, target vocab_size)
+            # output에 나오는 softmax의 확률은 어떤 의미를 가질까? vocab_size는 왜 target vocab_size인가?
+            #  -> decoder output에 나오는 softmax의 확률은 encoder input에 들어간 단어에 대한 target vocab의 확률이다.
             
             # Loading the target labels onto the GPU
-            label = batch['label'].to(device)
+            label = batch['label'].to(device) # label.shape = torch.Size([8, 350])
             
             # Computing loss between model's output and true labels
             loss = loss_fn(proj_output.view(-1, tokenizer_tgt.get_vocab_size()), label.view(-1))

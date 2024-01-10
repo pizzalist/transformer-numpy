@@ -90,7 +90,7 @@ class BilingualDataset(Dataset):
             'encoder_input': encoder_input,
             'decoder_input': decoder_input, 
             'encoder_mask': (encoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int(),
-            'decoder_mask': (decoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int() & casual_mask(decoder_input.size(0)), 
+            'decoder_mask': (decoder_input != self.pad_token).unsqueeze(0).unsqueeze(0).int() & casual_mask(decoder_input.size(0)), #  & 브로드캐스팅 
             'label': label,
             'src_text': src_text,
             'tgt_text': tgt_text
@@ -101,7 +101,6 @@ def get_ds(config):
     # Loading the train portion of the OpusBooks dataset.
     # The Language pairs will be defined in the 'config' dictionary we will build later
     ds_raw = load_dataset('opus_books', f'{config["lang_src"]}-{config["lang_tgt"]}', split = 'train') 
-    
     # Building or loading tokenizer for both the source and target languages 
     tokenizer_src = build_tokenizer(config, ds_raw, config['lang_src'])
     tokenizer_tgt = build_tokenizer(config, ds_raw, config['lang_tgt'])

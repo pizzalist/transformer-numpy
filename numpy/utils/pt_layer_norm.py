@@ -1,5 +1,5 @@
-import pytorch
-import pytorch.nn as nn
+import torch
+import torch.nn as nn
 
 class LayerNormalization(nn.Module):
     

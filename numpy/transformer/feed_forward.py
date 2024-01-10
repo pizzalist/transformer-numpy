@@ -1,5 +1,5 @@
-from .relu import ReLU
-from .dropout import Dropout
+from ..utils.relu import ReLU
+from ..utils.dropout import Dropout
 import numpy as np
 
 class FeedForwardBlock:

@@ -30,7 +30,10 @@ class MultiHeadAttentionBlock(nn.Module):
         d_k = query.shape[-1] # The last dimension of query, key, and value
         
         # We calculate the Attention(Q,K,V) as in the formula in the image above 
+        
+        # attention_scores를 모두 더하면 1인 확률값임
         attention_scores = (query @ key.transpose(-2,-1)) / math.sqrt(d_k) # @ = Matrix multiplication sign in PyTorch
+        # attention_scores (batch_size, h, seq_len, seq_len)
         
         # Before applying the softmax, we apply the mask to hide some interactions between words
         if mask is not None: # If a mask IS defined...
@@ -39,11 +42,13 @@ class MultiHeadAttentionBlock(nn.Module):
         if dropout is not None: # If a dropout IS defined...
             attention_scores = dropout(attention_scores) # We apply dropout to prevent overfitting
             
+        # 왜 attention_scores @ value를 하는지 모르겠음 
         return (attention_scores @ value), attention_scores # Multiply the output matrix by the V matrix, as in the formula
         
     def forward(self, q, k, v, mask): 
-        
-        query = self.w_q(q) # Q' matrix
+        # q, k, v (batch_size, seq_len, d_model)
+        query = self.w_q(q) # Q' matrix 
+        # query = (8 batch_size, 350 seq_len, 512 d_model)
         key = self.w_k(k) # K' matrix
         value = self.w_v(v) # V' matrix
         
@@ -51,13 +56,19 @@ class MultiHeadAttentionBlock(nn.Module):
         # Splitting results into smaller matrices for the different heads
         # Splitting embeddings (third dimension) into h parts
         query = query.view(query.shape[0], query.shape[1], self.h, self.d_k).transpose(1,2) # Transpose => bring the head to the second dimension
+        # query (batch_size, h, seq_len, d_k) -> (8 batch_size, 8 h, 350 seq_len, 64 d_k)
         key = key.view(key.shape[0], key.shape[1], self.h, self.d_k).transpose(1,2) # Transpose => bring the head to the second dimension
+        # key (batch_size, h, seq_len, d_k) -> (batch_size, h, seq_len, d_k)
         value = value.view(value.shape[0], value.shape[1], self.h, self.d_k).transpose(1,2) # Transpose => bring the head to the second dimension
+        # value = (8 batch_size, 8 h, 350 seq_len, 64 d_k)
         
         # Obtaining the output and the attention scores
         x, self.attention_scores = MultiHeadAttentionBlock.attention(query, key, value, mask, self.dropout)
+        # x (batch_size, seq_len, d_model), attention_scores (batch_size, h, seq_len, seq_len)
         
         # Obtaining the H matrix
+        # x (8 batch_size, 350 seq_len, 512 d_model)
         x = x.transpose(1, 2).contiguous().view(x.shape[0], -1, self.h * self.d_k)
+        
         
         return self.w_o(x) # Multiply the H matrix by the weight matrix W_o, resulting in the MH-A matrix

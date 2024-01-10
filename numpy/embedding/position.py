@@ -1,6 +1,6 @@
 import numpy as np
 from utils import Dropout
-# Creating the Positional Encoding
+
 class PositionalEncoding:
     
     def __init__(self, d_model: int, seq_len: int, dropout: float) -> None:
