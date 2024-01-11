@@ -1,5 +1,5 @@
-from ..utils.relu import ReLU
-from ..utils.dropout import Dropout
+from utils.relu import ReLU
+from utils.dropout import Dropout
 import numpy as np
 
 class FeedForwardBlock:
@@ -26,3 +26,6 @@ class FeedForwardBlock:
         # (batch, seq_len, d_ff) -->(batch, seq_len, d_model)
         linear_2 = np.dot(linear_1, self.W2) + self.b2
         return linear_2
+    
+    def __call__(self, x):
+        return self.forward(x)
