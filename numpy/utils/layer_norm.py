@@ -15,3 +15,6 @@ class LayerNormalization:
         
         # Returning the normalized input
         return self.alpha * (x-mean) / (std + self.eps) + self.bias
+    
+    def __call__(self, x):
+        return self.forward(x)

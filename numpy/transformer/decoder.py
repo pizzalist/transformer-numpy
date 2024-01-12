@@ -24,6 +24,9 @@ class DecoderBlock:
         # Feed-forward block with residual connections
         x = self.residual_connections[2](x, self.feed_forward_block)
         return x
+    
+    def __call__(self, x, encoder_output, src_mask, tgt_mask):
+        return self.forward(x, encoder_output, src_mask, tgt_mask)
 
 
 
@@ -43,3 +46,6 @@ class Decoder:
             # Applies each DecoderBlock to the input 'x' plus the encoder output and source and target masks
             x = layer(x, encoder_output, src_mask, tgt_mask)
         return self.norm(x) # Returns normalized output
+    
+    def __call__(self, x, encoder_output, src_mask, tgt_mask):
+        return self.forward(x, encoder_output, src_mask, tgt_mask)

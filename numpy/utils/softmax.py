@@ -5,3 +5,6 @@ def softmax(x, dim=None):
     # keepdims=True는 차원을 유지하겠다는 의미
     e_x = np.exp(x - np.max(x, axis=dim, keepdims=True))
     return e_x / e_x.sum(axis=dim, keepdims=True)
+
+def log_softmax(x, dim=None):
+    return np.log(softmax(x, dim=dim))

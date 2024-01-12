@@ -7,18 +7,20 @@ class PositionalEncoding:
         super().__init__()
         self.d_model = d_model # Dimensionality of the model
         self.seq_len = seq_len # Maximum sequence length
-        self.dropout = Dropout.forward(dropout) # Dropout layer to prevent overfitting
+        self.dropout = Dropout(dropout) # Dropout layer to prevent overfitting
         
         # Creating a positional encoding matrix of shape (seq_len, d_model) filled with zeros
         pe = np.zeros((seq_len, d_model)) 
         
         # Creating a tensor representing positions (0 to seq_len - 1)
-        position = np.arange(10, dtype=float)[:, np.newaxis] # Transforming 'position' into a 2D tensor['seq_len, 1']
+        position = np.arange(seq_len, dtype=float)[:, np.newaxis] # Transforming 'position' into a 2D tensor['seq_len, 1']
         
         # Creating the division term for the positional encoding formula
         div_term = np.exp(np.arange(0, d_model, 2, dtype=float) * -(np.log(10000.0) / d_model))
         
         # Apply sine to even indices in pe
+        # pe = (350, 512)
+    
         pe[:, 0::2] = np.sin(position * div_term)
         # Apply cosine to odd indices in pe
         pe[:, 1::2] = np.cos(position * div_term)
@@ -31,4 +33,7 @@ class PositionalEncoding:
     def forward(self,x):
         # Addind positional encoding to the input tensor X
         x = x + self.pe[:, :x.shape[1], :]
-        return self.dropout(x) # Dropout for regularization
+        return self.dropout.forward(x) # Dropout for regularization
+    
+    def __call__(self, x):
+        return self.forward(x)

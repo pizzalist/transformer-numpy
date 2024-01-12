@@ -14,3 +14,6 @@ class InputEmbeddings:
         
     def forward(self, x):
         return self.embedding[x] * math.sqrt(self.d_model) # Normalizing the variance of the embeddings
+    
+    def __call__(self, x):
+        return self.forward(x)
