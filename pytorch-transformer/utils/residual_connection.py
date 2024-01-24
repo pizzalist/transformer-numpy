@@ -4,9 +4,8 @@ from .layer_norm import LayerNormalization
 class ResidualConnection(nn.Module):
     def __init__(self, dropout: float) -> None:
         super().__init__()
-        self.dropout = nn.Dropout(dropout) # We use a dropout layer to prevent overfitting
-        self.norm = LayerNormalization() # We use a normalization layer 
+        self.dropout = nn.Dropout(dropout) 
+        self.norm = LayerNormalization() 
     
     def forward(self, x, sublayer):
-        # We normalize the input and add it to the original input 'x'. This creates the residual connection process.
         return x + self.dropout(sublayer(self.norm(x))) 

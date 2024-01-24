@@ -32,7 +32,6 @@ def get_config():
         'experiment_name': 'runs/tmodel'
     }
     
-
 # Function to construct the path for saving and retrieving model weights
 def get_weights_file_path(config, epoch: str):
     model_folder = config['model_folder'] # Extracting model folder from the config
@@ -102,7 +101,7 @@ def train_model(config):
             #   -> config에 'batch_size': 8로 설정 해놔서
             # 350의 의미는?
             #  -> 350개의 단어를 의미한다.
-            model.train() # Train the model
+            model.train() 
             
             # Loading input data and masks onto the GPU
             encoder_input = batch['encoder_input'].to(device) # torch.Size([8, 350])

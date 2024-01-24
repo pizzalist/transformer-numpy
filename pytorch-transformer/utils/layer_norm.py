@@ -3,19 +3,18 @@ import torch.nn as nn
 
 class LayerNormalization(nn.Module):
     
-    def __init__(self, eps: float = 10**-6) -> None: # We define epsilon as 0.000001 to avoid division by zero
+    def __init__(self, eps: float = 10**-6) -> None: # epsilon 0.000001 으로 지정하여 0으로 나누는 것을 방지 
         super().__init__()
         self.eps = eps
         
-        # We define alpha as a trainable parameter and initialize it with ones
-        self.alpha = nn.Parameter(torch.ones(1)) # One-dimensional tensor that will be used to scale the input data
+        self.alpha = nn.Parameter(torch.ones(1)) 
         
-        # We define bias as a trainable parameter and initialize it with zeros
-        self.bias = nn.Parameter(torch.zeros(1)) # One-dimensional tenso that will be added to the input data
+        self.bias = nn.Parameter(torch.zeros(1)) 
         
     def forward(self, x):
-        mean = x.mean(dim = -1, keepdim = True) # Computing the mean of the input data. Keeping the number of dimensions unchanged
-        std = x.std(dim = -1, keepdim = True) # Computing the standard deviation of the input data. Keeping the number of dimensions unchanged
+        # x: (batch_size, seq_len, d_model)
+        mean = x.mean(dim = -1, keepdim = True) 
+        std = x.std(dim = -1, keepdim = True) 
         
-        # Returning the normalized input
         return self.alpha * (x-mean) / (std + self.eps) + self.bias
+    

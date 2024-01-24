@@ -6,4 +6,4 @@ class ProjectionLayer(nn.Module):
         super().__init__()
         self.proj = nn.Linear(d_model, vocab_size) # Linear layer for projecting the feature space of 'd_model' to the output space of 'vocab_size'
     def forward(self, x):
-        return torch.log_softmax(self.proj(x), dim = -1) # Applying the log Softmax function to the output
+        return torch.log_softmax(self.proj(x), dim = -1) 
